@@ -1,11 +1,17 @@
-from fastapi.responses import PlainTextResponse
-from dotenv import load_dotenv
-import requests
-import openai
-import os
+
 from fastapi import FastAPI, Request
+from fastapi.responses import PlainTextResponse
+import openai
+import requests
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
+openai.api_key = os.getenv("OPENAI_API_KEY")
 
 app = FastAPI()
+
+# ✅ WhatsApp webhook verification
 @app.get("/webhook")
 async def verify_webhook(request: Request):
     params = request.query_params
@@ -13,33 +19,26 @@ async def verify_webhook(request: Request):
         return PlainTextResponse(content=params.get("hub.challenge"))
     return PlainTextResponse(status_code=403, content="Invalid token")
 
-# Replace clearly with your own OpenAI API key
-load_dotenv()  # clearly loads variables from your .env file
-openai.api_key = os.getenv("OPENAI_API_KEY")
-
-
-@app.get("/")
-async def root():
-    return {"message": "RixDigi AI WhatsApp API is running!"}
-
+# ✅ Handle incoming messages
 @app.post("/webhook")
 async def whatsapp_webhook(request: Request):
     data = await request.json()
     try:
-        incoming_msg = data["entry"][0]["changes"][0]["value"]["messages"][0]["text"]["body"]
-        sender_number = data["entry"][0]["changes"][0]["value"]["messages"][0]["from"]
+        message = data["entry"][0]["changes"][0]["value"]["messages"][0]["text"]["body"]
+        phone_number = data["entry"][0]["changes"][0]["value"]["messages"][0]["from"]
 
+        # Generate GPT-4 response
         response = openai.ChatCompletion.create(
             model="gpt-4",
             messages=[
-                {"role": "system", "content": "You are a professional customer support assistant for RixDigi, a digital marketing agency."},
-                {"role": "user", "content": incoming_msg}
+                {"role": "system", "content": "You are a helpful assistant for RixDigi, a digital marketing agency."},
+                {"role": "user", "content": message}
             ]
         )
-
         reply = response.choices[0].message.content
 
-        send_whatsapp_message(sender_number, reply)
+        # Send reply via WhatsApp
+        send_whatsapp_message(phone_number, reply)
 
     except Exception as e:
         print(f"Error: {e}")
