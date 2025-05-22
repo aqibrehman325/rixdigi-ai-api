@@ -1,10 +1,18 @@
-
+from fastapi.responses import PlainTextResponse
 from dotenv import load_dotenv
 import requests
 import openai
 import os
 from fastapi import FastAPI, Request
+
 app = FastAPI()
+@app.get("/webhook")
+async def verify_webhook(request: Request):
+    params = request.query_params
+    if params.get("hub.mode") == "subscribe" and params.get("hub.verify_token") == "rixdigi0325":
+        return PlainTextResponse(content=params.get("hub.challenge"))
+    return PlainTextResponse(status_code=403, content="Invalid token")
+
 # Replace clearly with your own OpenAI API key
 load_dotenv()  # clearly loads variables from your .env file
 openai.api_key = os.getenv("OPENAI_API_KEY")
