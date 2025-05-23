@@ -51,7 +51,7 @@ async def whatsapp_webhook(request: Request):
 def send_whatsapp_message(to, message):
     url = "https://graph.facebook.com/v18.0/648346951698338/messages"
     headers = {
-        "Authorization": "Bearer EAAan76DIlQEBOzJQoWHsjpPzgbR2kXOBEAgytcC1RFh5HPzseoBudnHX4iY9EZAfCFQY6uxYukZB0heRTKQiHndjHtZBsEIAsQe4sDnLRPR6refZBOrVIOAd5DgTvjTElkP5x8dHxBKyVFTSftRZBdZAKVqsGkxxy9lFD3eY7kXyGXyl2T0a7dIOZC5lTuprrrj0y5QzZCmawPnkbjG6W1xKl4NMK0rKfhrMj4FZAKZAAdtxcZD",
+        "Authorization": "Bearer EAAan76DIlQEBO5200njS2gFcJPsGeUGIxAehnbUYuzeUt8HrP58X9gHWyVQvm4bTM3Kbm7WzDw12jq8U66gqtDHzshtYTGGbt4coZAVFj6vshLZBAvMi7J051nHpE1uDOZAdnlwYaUaGkPTsRgINDKhA4afZB5OKd7euxZC9DdpJbTjkhaFsRNdXdtz2lGRezynHMQKyII2qxzsUPbUmrnV6OSnY4zpziNDNfGwZB17ESGOMD4RwDd",
         "Content-Type": "application/json"
     }
     payload = {
@@ -61,3 +61,4 @@ def send_whatsapp_message(to, message):
     }
     response = requests.post(url, json=payload, headers=headers)
     print(response.json())
+
